@@ -1,0 +1,117 @@
+-- =========================================
+-- CHIT 21 : MYSQL TERMINAL
+-- Empl, Position, Duty_alloc
+-- =========================================
+
+-- Step 1: Open MySQL Terminal
+mysql -u root -p
+
+-- Step 2: Create Database
+CREATE DATABASE OfficeDB;
+
+-- Step 3: Use Database
+USE OfficeDB;
+
+-- Step 4: Create Empl Table
+CREATE TABLE Empl (
+    e_no INT,
+    e_name VARCHAR(20),
+    post VARCHAR(20),
+    pay_rate INT
+);
+
+-- Step 5: Create Position Table
+CREATE TABLE Position (
+    pos_no INT,
+    post VARCHAR(20)
+);
+
+-- Step 6: Create Duty_alloc Table
+CREATE TABLE Duty_alloc (
+    pos_no INT,
+    e_no INT,
+    month VARCHAR(10),
+    year INT,
+    shift VARCHAR(20)
+);
+
+-- Step 7: Insert Data into Empl
+INSERT INTO Empl VALUES
+(123,'Sachin','Manager',25000),
+(124,'Amit','Clerk',18000),
+(125,'Riya','Manager',22000),
+(126,'Neha','Supervisor',26000),
+(127,'Sagar','Manager',19000);
+
+-- Step 8: Insert Data into Position
+INSERT INTO Position VALUES
+(1,'Manager'),
+(2,'Clerk'),
+(3,'Supervisor');
+
+-- Step 9: Insert Data into Duty_alloc
+INSERT INTO Duty_alloc VALUES
+(1,123,'April',2003,'First'),
+(2,124,'April',2003,'Second'),
+(1,125,'April',2003,'First'),
+(3,126,'May',2003,'Night'),
+(1,127,'April',2003,'Second');
+
+-- Step 10: Display Tables
+SELECT * FROM Empl;
+SELECT * FROM Position;
+SELECT * FROM Duty_alloc;
+
+---------------------------------------------------
+-- i. Duty allocation details for e_no 123
+--    first shift in April 2003
+---------------------------------------------------
+SELECT *
+FROM Duty_alloc
+WHERE e_no = 123
+AND shift = 'First'
+AND month = 'April'
+AND year = 2003;
+
+---------------------------------------------------
+-- ii. Employees whose pay_rate >= Sachin's pay_rate
+---------------------------------------------------
+SELECT *
+FROM Empl
+WHERE pay_rate >= (
+    SELECT pay_rate
+    FROM Empl
+    WHERE e_name = 'Sachin'
+);
+
+---------------------------------------------------
+-- iii. Create view for minimum, maximum,
+--      average salary for all posts
+---------------------------------------------------
+CREATE VIEW Salary_View AS
+SELECT post,
+       MIN(pay_rate) AS Minimum_Salary,
+       MAX(pay_rate) AS Maximum_Salary,
+       AVG(pay_rate) AS Average_Salary
+FROM Empl
+GROUP BY post;
+
+-- Display View
+SELECT * FROM Salary_View;
+
+---------------------------------------------------
+-- iv. Count of different employees on each shift
+--     having post 'Manager'
+---------------------------------------------------
+SELECT D.shift,
+       COUNT(DISTINCT D.e_no) AS Total_Managers
+FROM Duty_alloc D
+JOIN Empl E
+ON D.e_no = E.e_no
+WHERE E.post = 'Manager'
+GROUP BY D.shift;
+
+---------------------------------------------------
+-- Step 11: Exit MySQL
+---------------------------------------------------
+EXIT;
