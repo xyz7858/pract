@@ -1,0 +1,17 @@
+-- =========================================
+-- MYSQL : EMP TABLE WITH CONSTRAINTS
+-- =========================================
+
+-- Step 1: Open MySQL Terminal
+mysql -u root -p
+
+-- Step 2: Create Database
+CREATE DATABASE CompanyDB;
+
+-- Step 3: Use Database
+USE CompanyDB;
+
+-- Step 4: Create emp Table
+-- AUTO_INCREMENT is used for sequence generation and can be set to start at 101
+CREATE TABLE emp (
+    E
