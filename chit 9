@@ -1,0 +1,99 @@
+// =========================================
+// CHIT : MONGODB (Mongo Terminal)
+// Collection : orderinfo
+// =========================================
+
+// Step 1: Open MongoDB Terminal
+mongosh
+
+// Step 2: Create / Use Database
+use OrderDB
+
+// Step 3: Create Collection and Insert Documents
+db.orderinfo.insertMany([
+{
+    cust_id:123,
+    cust_name:"abc",
+    status:"A",
+    price:250
+},
+{
+    cust_id:124,
+    cust_name:"xyz",
+    status:"A",
+    price:500
+},
+{
+    cust_id:125,
+    cust_name:"pqr",
+    status:"B",
+    price:800
+},
+{
+    cust_id:126,
+    cust_name:"lmn",
+    status:"A",
+    price:1200
+},
+{
+    cust_id:127,
+    cust_name:"def",
+    status:"B",
+    price:300
+}
+])
+
+// Step 4: Display All Documents
+db.orderinfo.find()
+
+// ------------------------------------------------
+// i. Find average price for each customer having status 'A'
+// ------------------------------------------------
+db.orderinfo.aggregate([
+    { $match: { status: "A" } },
+    {
+        $group: {
+            _id: "$cust_name",
+            Average_Price: { $avg: "$price" }
+        }
+    }
+])
+
+// ------------------------------------------------
+// ii. Display status of customers whose price is
+//     between 100 and 1000
+// ------------------------------------------------
+db.orderinfo.find(
+    {
+        price: { $gte: 100, $lte: 1000 }
+    },
+    {
+        cust_name: 1,
+        status: 1,
+        price: 1
+    }
+)
+
+// ------------------------------------------------
+// iii. Display customer information without _id
+// ------------------------------------------------
+db.orderinfo.find(
+    {},
+    {
+        _id: 0
+    }
+)
+
+// ------------------------------------------------
+// iv. Create simple index on orderinfo collection
+// ------------------------------------------------
+db.orderinfo.createIndex({ cust_id: 1 })
+
+// Display Indexes
+db.orderinfo.getIndexes()
+
+// Fire Query using Indexed Field
+db.orderinfo.find({ cust_id: 123 })
+
+// Step 5: Exit MongoDB
+exit
