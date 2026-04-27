@@ -1,0 +1,119 @@
+-- =========================================
+-- CHIT 8 / CHIT 9 : MYSQL TERMINAL
+-- teaches(T_ID, course_id, sec_id, semester, year)
+-- student(S_ID, name, dept_name, tot_cred)
+-- instructor(T_ID, name, dept_name, salary)
+-- course(course_id, title, dept_name, credits)
+-- =========================================
+
+-- Step 1: Open MySQL Terminal
+mysql -u root -p
+
+-- Step 2: Create Database
+CREATE DATABASE UniversityDB;
+
+-- Step 3: Use Database
+USE UniversityDB;
+
+-- Step 4: Create Student Table
+CREATE TABLE student (
+    S_ID INT,
+    name VARCHAR(20),
+    dept_name VARCHAR(20),
+    tot_cred INT
+);
+
+-- Step 5: Create Instructor Table
+CREATE TABLE instructor (
+    T_ID INT,
+    name VARCHAR(20),
+    dept_name VARCHAR(20),
+    salary INT
+);
+
+-- Step 6: Create Course Table
+CREATE TABLE course (
+    course_id INT,
+    title VARCHAR(20),
+    dept_name VARCHAR(20),
+    credits INT
+);
+
+-- Step 7: Create Teaches Table
+CREATE TABLE teaches (
+    T_ID INT,
+    course_id INT,
+    sec_id INT,
+    semester VARCHAR(20),
+    year INT
+);
+
+-- Step 8: Insert into Student
+INSERT INTO student VALUES
+(1,'Amit','Computer',120),
+(2,'Amol','IT',110),
+(3,'Seema','Computer',130),
+(4,'Riya',NULL,100),
+(5,'Sam','Computer',125);
+
+-- Step 9: Insert into Instructor
+INSERT INTO instructor VALUES
+(101,'Amol','Computer',50000),
+(102,'Amit','IT',40000),
+(103,'Neha','Computer',60000),
+(104,'Raj','ENTC',45000);
+
+-- Step 10: Insert into Course
+INSERT INTO course VALUES
+(201,'DBMS','Computer',4),
+(202,'CN','IT',3),
+(203,'TOC','Computer',4),
+(204,'OS','Computer',4);
+
+-- Step 11: Insert into Teaches
+INSERT INTO teaches VALUES
+(101,201,1,'Sem1',2025),
+(101,203,2,'Sem2',2025),
+(102,202,1,'Sem1',2025),
+(103,204,1,'Sem2',2025);
+
+---------------------------------------------------
+-- i. Find names of instructors who taught courses semester wise
+---------------------------------------------------
+SELECT instructor.name, course.title, teaches.semester, teaches.year
+FROM instructor
+JOIN teaches
+ON instructor.T_ID = teaches.T_ID
+JOIN course
+ON teaches.course_id = course.course_id
+ORDER BY teaches.semester;
+
+---------------------------------------------------
+-- ii. Create View on single table for student details
+---------------------------------------------------
+CREATE VIEW Student_View AS
+SELECT *
+FROM student;
+
+-- Display View
+SELECT * FROM Student_View;
+
+---------------------------------------------------
+-- iii. Rename column dept_name to department_name
+---------------------------------------------------
+ALTER TABLE student
+RENAME COLUMN dept_name TO department_name;
+
+---------------------------------------------------
+-- iv. Delete student records whose department is NULL
+---------------------------------------------------
+DELETE FROM student
+WHERE department_name IS NULL;
+
+-- Display Updated Student Table
+SELECT * FROM student;
+
+---------------------------------------------------
+-- Step 12: Exit MySQL
+---------------------------------------------------
+EXIT;
