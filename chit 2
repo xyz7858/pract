@@ -1,0 +1,98 @@
+-- =========================================
+-- CHIT 2 : UNNAMED PL/SQL BLOCK
+-- Use of Control Structure + Exception Handling
+-- =========================================
+
+-- Step 1: Login to Oracle SQL*Plus in Ubuntu
+sqlplus system/password
+
+-- Step 2: Create Borrower Table
+CREATE TABLE Borrower (
+    Rollin NUMBER(5),
+    Name VARCHAR2(20),
+    DateofIssue DATE,
+    NameofBook VARCHAR2(30),
+    Status VARCHAR2(1)
+);
+
+-- Step 3: Create Fine Table
+CREATE TABLE Fine (
+    Roll_no NUMBER(5),
+    Date1 DATE,
+    Amt NUMBER(10)
+);
+
+-- Step 4: Insert Sample Records
+INSERT INTO Borrower VALUES (1,'Amit',TO_DATE('01-04-2026','DD-MM-YYYY'),'DBMS','I');
+INSERT INTO Borrower VALUES (2,'Neha',TO_DATE('10-04-2026','DD-MM-YYYY'),'CN','I');
+INSERT INTO Borrower VALUES (3,'Pooja',TO_DATE('15-04-2026','DD-MM-YYYY'),'TOC','I');
+
+COMMIT;
+
+-- Step 5: Enable Output
+SET SERVEROUTPUT ON;
+
+-- Step 6: PL/SQL Block
+DECLARE
+    R_No Borrower.Rollin%TYPE := &Roll_No;
+    B_Name Borrower.NameofBook%TYPE := '&Book_Name';
+    Issue_Date Borrower.DateofIssue%TYPE;
+    Days NUMBER;
+    Fine_Amt NUMBER := 0;
+
+BEGIN
+    -- Get Date of Issue
+    SELECT DateofIssue
+    INTO Issue_Date
+    FROM Borrower
+    WHERE Rollin = R_No
+    AND NameofBook = B_Name;
+
+    -- Calculate number of days
+    Days := SYSDATE - Issue_Date;
+
+    -- Control Structure for Fine Calculation
+    IF Days BETWEEN 15 AND 30 THEN
+        Fine_Amt := Days * 5;
+
+    ELSIF Days > 30 THEN
+        Fine_Amt := (30 * 5) + ((Days - 30) * 50);
+
+    ELSE
+        Fine_Amt := 0;
+    END IF;
+
+    -- Update Status from I to R
+    UPDATE Borrower
+    SET Status = 'R'
+    WHERE Rollin = R_No
+    AND NameofBook = B_Name;
+
+    -- Insert into Fine Table if Fine Applicable
+    IF Fine_Amt > 0 THEN
+        INSERT INTO Fine
+        VALUES (R_No, SYSDATE, Fine_Amt);
+    END IF;
+
+    COMMIT;
+
+    DBMS_OUTPUT.PUT_LINE('Book Submitted Successfully');
+    DBMS_OUTPUT.PUT_LINE('Total Fine = Rs. ' || Fine_Amt);
+
+-- Exception Handling
+EXCEPTION
+    WHEN NO_DATA_FOUND THEN
+        DBMS_OUTPUT.PUT_LINE('No Such Record Found');
+
+    WHEN OTHERS THEN
+        DBMS_OUTPUT.PUT_LINE('Error Occurred');
+END;
+/
+-- Step 7: Display Borrower Table
+SELECT * FROM Borrower;
+
+-- Step 8: Display Fine Table
+SELECT * FROM Fine;
+
+-- Step 9: Exit
+EXIT;
