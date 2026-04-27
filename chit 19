@@ -1,0 +1,125 @@
+-- =========================================
+-- CHIT 19 : MYSQL TERMINAL
+-- Emp, Works, Company, Manager
+-- =========================================
+
+-- Step 1: Open MySQL
+mysql -u root -p
+
+-- Step 2: Create Database
+CREATE DATABASE CompanyDB;
+
+-- Step 3: Use Database
+USE CompanyDB;
+
+-- Step 4: Create Emp Table
+CREATE TABLE Emp (
+    emp_id INT,
+    ename VARCHAR(20),
+    street VARCHAR(30),
+    city VARCHAR(20)
+);
+
+-- Step 5: Create Company Table
+CREATE TABLE Company (
+    c_id INT,
+    cname VARCHAR(20),
+    city VARCHAR(20)
+);
+
+-- Step 6: Create Works Table
+CREATE TABLE Works (
+    emp_id INT,
+    c_id INT,
+    ename VARCHAR(20),
+    cname VARCHAR(20),
+    sal INT
+);
+
+-- Step 7: Create Manager Table
+CREATE TABLE Manager (
+    mgr_id INT,
+    mgrname VARCHAR(20)
+);
+
+-- Step 8: Insert Data into Emp
+INSERT INTO Emp VALUES
+(1,'Amit','MG Road','Pune'),
+(2,'Sneha','FC Road','Mumbai'),
+(3,'Riya','Camp','Pune'),
+(4,'Sagar','Main Road','Delhi'),
+(5,'Neha','Shivaji Nagar','Pune');
+
+-- Step 9: Insert Data into Company
+INSERT INTO Company VALUES
+(101,'ABC','Mumbai'),
+(102,'Mbank','Pune'),
+(103,'Bosch','Pune'),
+(104,'SBC Company','Mumbai');
+
+-- Step 10: Insert Data into Works
+INSERT INTO Works VALUES
+(1,101,'Amit','ABC',25000),
+(2,102,'Sneha','Mbank',22000),
+(3,103,'Riya','Bosch',18000),
+(4,104,'Sagar','SBC Company',55000),
+(5,102,'Neha','Mbank',19000);
+
+-- Step 11: Insert Data into Manager
+INSERT INTO Manager VALUES
+(102,'Sneha'),
+(103,'Riya');
+
+---------------------------------------------------
+-- i. Modify database so company ABC is now in Pune
+---------------------------------------------------
+UPDATE Company
+SET city = 'Pune'
+WHERE cname = 'ABC';
+
+-- Display Updated Company Table
+SELECT * FROM Company;
+
+---------------------------------------------------
+-- ii. Give all managers of Mbank a raise:
+-- Salary > 20000 => 3%
+-- Otherwise => 10%
+---------------------------------------------------
+UPDATE Works
+SET sal = CASE
+            WHEN sal > 20000 THEN sal + (sal * 0.03)
+            ELSE sal + (sal * 0.10)
+          END
+WHERE cname = 'Mbank';
+
+-- Display Updated Works Table
+SELECT * FROM Works
+WHERE cname = 'Mbank';
+
+---------------------------------------------------
+-- iii. Names of employees who work in Bosch in Pune
+---------------------------------------------------
+SELECT ename
+FROM Works
+WHERE cname = 'Bosch'
+AND emp_id IN (
+    SELECT emp_id
+    FROM Emp
+    WHERE city = 'Pune'
+);
+
+---------------------------------------------------
+-- iv. Delete records of SBC Company employees
+-- whose salary > 50000
+---------------------------------------------------
+DELETE FROM Works
+WHERE cname = 'SBC Company'
+AND sal > 50000;
+
+-- Display Updated Works Table
+SELECT * FROM Works;
+
+---------------------------------------------------
+-- Step 12: Exit MySQL
+---------------------------------------------------
+EXIT;
