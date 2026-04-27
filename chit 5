@@ -1,0 +1,101 @@
+-- =========================================
+-- CHIT 5 : CURSORS (IMPLICIT + EXPLICIT + PARAMETERIZED)
+-- Merge N_RollCall into O_RollCall
+-- Skip duplicate records
+-- =========================================
+
+-- Step 1: Login to Oracle
+sqlplus system/password
+
+-- Step 2: Create Old RollCall Table
+CREATE TABLE O_RollCall (
+    Roll NUMBER(5),
+    Name VARCHAR2(20)
+);
+
+-- Step 3: Create New RollCall Table
+CREATE TABLE N_RollCall (
+    Roll NUMBER(5),
+    Name VARCHAR2(20)
+);
+
+-- Step 4: Insert Records into O_RollCall
+INSERT INTO O_RollCall VALUES (1,'Amit');
+INSERT INTO O_RollCall VALUES (2,'Neha');
+INSERT INTO O_RollCall VALUES (3,'Pooja');
+
+-- Step 5: Insert Records into N_RollCall
+INSERT INTO N_RollCall VALUES (2,'Neha');
+INSERT INTO N_RollCall VALUES (3,'Pooja');
+INSERT INTO N_RollCall VALUES (4,'Riya');
+INSERT INTO N_RollCall VALUES (5,'Raj');
+
+COMMIT;
+
+-- Step 6: Enable Output
+SET SERVEROUTPUT ON;
+
+-- Step 7: PL/SQL Block using Parameterized Cursor
+DECLARE
+    -- Explicit Cursor for New RollCall
+    CURSOR New_Cur IS
+        SELECT Roll, Name
+        FROM N_RollCall;
+
+    -- Parameterized Cursor to check duplicate in Old RollCall
+    CURSOR Old_Cur(R_No NUMBER) IS
+        SELECT Roll
+        FROM O_RollCall
+        WHERE Roll = R_No;
+
+    V_Roll N_RollCall.Roll%TYPE;
+    V_Name N_RollCall.Name%TYPE;
+
+BEGIN
+    -- Open Explicit Cursor
+    OPEN New_Cur;
+
+    LOOP
+        FETCH New_Cur INTO V_Roll, V_Name;
+
+        EXIT WHEN New_Cur%NOTFOUND;
+
+        -- Check each record in old table
+        OPEN Old_Cur(V_Roll);
+
+        FETCH Old_Cur INTO V_Roll;
+
+        -- If record not found, insert
+        IF Old_Cur%NOTFOUND THEN
+            INSERT INTO O_RollCall
+            VALUES (V_Roll, V_Name);
+
+            DBMS_OUTPUT.PUT_LINE('Record Inserted: ' || V_Roll || ' ' || V_Name);
+
+        ELSE
+            DBMS_OUTPUT.PUT_LINE('Duplicate Record Skipped');
+        END IF;
+
+        CLOSE Old_Cur;
+
+    END LOOP;
+
+    CLOSE New_Cur;
+
+    COMMIT;
+
+-- Exception Handling
+EXCEPTION
+    WHEN OTHERS THEN
+        DBMS_OUTPUT.PUT_LINE('Error Occurred');
+END;
+/
+---------------------------------------------------
+-- Step 8: Display Merged Table
+---------------------------------------------------
+SELECT * FROM O_RollCall;
+
+---------------------------------------------------
+-- Step 9: Exit
+---------------------------------------------------
+EXIT;
