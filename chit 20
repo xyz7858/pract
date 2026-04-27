@@ -1,0 +1,211 @@
+// =========================================
+// CHIT 20 : MONGODB (Indexing + Aggregation)
+// =========================================
+
+// Step 1: Open MongoDB Terminal
+mongosh
+
+// =========================================
+// INDEXING PART
+// =========================================
+
+// 1. Create Database
+use CollegeDB
+
+// 2. Create Collection and Insert Documents
+db.employee.insertMany([
+{
+    emp_id: 1,
+    name: "Amit",
+    department: "Computer",
+    salary: 25000
+},
+{
+    emp_id: 2,
+    name: "Neha",
+    department: "IT",
+    salary: 30000
+},
+{
+    emp_id: 3,
+    name: "Pooja",
+    department: "Computer",
+    salary: 28000
+},
+{
+    emp_id: 4,
+    name: "Raj",
+    department: "ENTC",
+    salary: 35000
+}
+])
+
+// Display Documents
+db.employee.find()
+
+// 3. Create Single Index
+db.employee.createIndex(
+{
+    name: 1
+}
+)
+
+// 4. Create Compound Index
+db.employee.createIndex(
+{
+    department: 1,
+    salary: -1
+}
+)
+
+// 5. Create Unique Index on emp_id
+db.employee.createIndex(
+{
+    emp_id: 1
+},
+{
+    unique: true
+}
+)
+
+// 6. Show Index Information
+db.employee.getIndexes()
+
+// Fire Queries
+db.employee.find({ name: "Amit" })
+db.employee.find({ department: "Computer", salary: { $gt: 25000 } })
+
+// 7. Remove Index
+db.employee.dropIndex(
+{
+    name: 1
+}
+)
+
+// Display Remaining Indexes
+db.employee.getIndexes()
+
+// =========================================
+// AGGREGATION PART
+// =========================================
+
+// Create Student Collection
+db.Student.insertMany([
+{ Rollno:1, name:'Navin', subject:'DMSA', marks:78 },
+{ Rollno:2, name:'anusha', subject:'OSD', marks:75 },
+{ Rollno:3, name:'ravi', subject:'TOC', marks:69 },
+{ Rollno:4, name:'veena', subject:'TOC', marks:70 },
+{ Rollno:5, name:'Pravini', subject:'OSD', marks:80 },
+{ Rollno:6, name:'Reena', subject:'DMSA', marks:50 },
+{ Rollno:7, name:'Geeta', subject:'CN', marks:90 },
+{ Rollno:8, name:'Akash', subject:'CN', marks:85 }
+])
+
+// Display Student Data
+db.Student.find()
+
+// =========================================
+// 2. Max marks of each subject
+// =========================================
+db.Student.aggregate([
+{
+    $group: {
+        _id: "$subject",
+        Max_Marks: { $max: "$marks" }
+    }
+}
+])
+
+// =========================================
+// 3. Min marks of each subject
+// =========================================
+db.Student.aggregate([
+{
+    $group: {
+        _id: "$subject",
+        Min_Marks: { $min: "$marks" }
+    }
+}
+])
+
+// =========================================
+// 4. Sum of marks of each subject
+// =========================================
+db.Student.aggregate([
+{
+    $group: {
+        _id: "$subject",
+        Total_Marks: { $sum: "$marks" }
+    }
+}
+])
+
+// =========================================
+// 5. Average marks of each subject
+// =========================================
+db.Student.aggregate([
+{
+    $group: {
+        _id: "$subject",
+        Average_Marks: { $avg: "$marks" }
+    }
+}
+])
+
+// =========================================
+// 6. First record of each subject
+// =========================================
+db.Student.aggregate([
+{
+    $sort: { Rollno: 1 }
+},
+{
+    $group: {
+        _id: "$subject",
+        First_Record: { $first: "$name" }
+    }
+}
+])
+
+// =========================================
+// 7. Last record of each subject
+// =========================================
+db.Student.aggregate([
+{
+    $sort: { Rollno: 1 }
+},
+{
+    $group: {
+        _id: "$subject",
+        Last_Record: { $last: "$name" }
+    }
+}
+])
+
+// =========================================
+// 8. Count number of records of each subject
+// =========================================
+db.Student.aggregate([
+{
+    $group: {
+        _id: "$subject",
+        Total_Students: { $sum: 1 }
+    }
+}
+])
+
+// =========================================
+// 9. Count number of records of each subject
+// (Same as above as per question)
+// =========================================
+db.Student.aggregate([
+{
+    $group: {
+        _id: "$subject",
+        Count: { $sum: 1 }
+    }
+}
+])
+
+// Step 2: Exit MongoDB
+exit
