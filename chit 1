@@ -1,0 +1,178 @@
+-- =========================================
+-- CHIT 1 : MYSQL (JOINS AND SUBQUERIES)
+-- UBUNTU / MYSQL COMMAND LINE STEPS
+-- =========================================
+
+-- Step 1: Open Terminal in Ubuntu
+-- Step 2: Login to MySQL
+mysql -u root -p
+
+-- Step 3: Create Database
+CREATE DATABASE BankDB;
+
+-- Step 4: Select Database
+USE BankDB;
+
+-- Step 5: Create Customer Table
+CREATE TABLE Customer (
+    C_id INT,
+    Cname VARCHAR(20),
+    City VARCHAR(20)
+);
+
+-- Step 6: Create Account Table
+CREATE TABLE Account (
+    C_id INT,
+    Acc_Type VARCHAR(20),
+    Amount INT
+);
+
+-- Step 7: Insert Records into Customer Table
+INSERT INTO Customer VALUES
+(1,'John','Nashik'),
+(2,'Seema','Aurangabad'),
+(3,'Amita','Nagar'),
+(4,'Rakesh','Pune'),
+(5,'Samata','Nashik'),
+(6,'Ankita','Chandwad'),
+(7,'Bhavika','Pune'),
+(8,'Deepa','Mumbai'),
+(9,'Nitin','Nagpur'),
+(10,'Pooja','Pune');
+
+-- Step 8: Insert Records into Account Table
+INSERT INTO Account VALUES
+(1,'Current',5000),
+(2,'Saving',20000),
+(3,'Saving',70000),
+(4,'Saving',50000),
+(6,'Current',35000),
+(7,'Loan',30000),
+(8,'Saving',50000),
+(9,'Saving',90000),
+(10,'Loan',8000),
+(11,'Current',45000);
+
+-- Step 9: Display Customer Table
+SELECT * FROM Customer;
+
+-- Step 10: Display Account Table
+SELECT * FROM Account;
+
+---------------------------------------------------
+-- 1. Show cname, Acc_Type, amount of customer
+--    who is having Saving Account
+---------------------------------------------------
+
+-- Using INNER JOIN
+SELECT Cname, Acc_Type, Amount
+FROM Customer
+JOIN Account
+ON Customer.C_id = Account.C_id
+WHERE Acc_Type='Saving';
+
+-- Using NATURAL JOIN
+SELECT Cname, Acc_Type, Amount
+FROM Customer
+NATURAL JOIN Account
+WHERE Acc_Type='Saving';
+
+-- Using LEFT JOIN
+SELECT Cname, Acc_Type, Amount
+FROM Customer
+LEFT JOIN Account
+ON Customer.C_id = Account.C_id
+WHERE Acc_Type='Saving';
+
+-- Using RIGHT JOIN
+SELECT Cname, Acc_Type, Amount
+FROM Customer
+RIGHT JOIN Account
+ON Customer.C_id = Account.C_id
+WHERE Acc_Type='Saving';
+
+---------------------------------------------------
+-- 2. Display data using Natural, Left, Right Join
+---------------------------------------------------
+
+-- Natural Join
+SELECT *
+FROM Customer
+NATURAL JOIN Account;
+
+-- Left Join
+SELECT *
+FROM Customer
+LEFT JOIN Account
+ON Customer.C_id = Account.C_id;
+
+-- Right Join
+SELECT *
+FROM Customer
+RIGHT JOIN Account
+ON Customer.C_id = Account.C_id;
+
+---------------------------------------------------
+-- 3. Customers living in same city as Pooja
+---------------------------------------------------
+
+SELECT *
+FROM Customer
+WHERE City = (
+    SELECT City
+    FROM Customer
+    WHERE Cname='Pooja'
+);
+
+---------------------------------------------------
+-- 4. Account having less amount than average amount
+---------------------------------------------------
+
+SELECT *
+FROM Account
+WHERE Amount < (
+    SELECT AVG(Amount)
+    FROM Account
+);
+
+---------------------------------------------------
+-- 5. Display C_id having maximum amount
+---------------------------------------------------
+
+SELECT C_id
+FROM Account
+WHERE Amount = (
+    SELECT MAX(Amount)
+    FROM Account
+);
+
+---------------------------------------------------
+-- 6. Display amount and acc_type whose amount is
+--    minimum amount of that acc_type
+---------------------------------------------------
+
+SELECT Amount, Acc_Type
+FROM Account A
+WHERE Amount = (
+    SELECT MIN(Amount)
+    FROM Account
+    WHERE Acc_Type = A.Acc_Type
+);
+
+---------------------------------------------------
+-- 7. Display amount of those accounts whose amount
+--    is higher than amount of any saving account
+---------------------------------------------------
+
+SELECT Amount
+FROM Account
+WHERE Amount > ANY (
+    SELECT Amount
+    FROM Account
+    WHERE Acc_Type='Saving'
+);
+
+---------------------------------------------------
+-- Step 11: Exit MySQL
+---------------------------------------------------
+EXIT;
