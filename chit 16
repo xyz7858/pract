@@ -1,0 +1,145 @@
+-- =========================================
+-- MYSQL : Employee and Project Table
+-- =========================================
+
+-- Step 1: Open MySQL Terminal
+mysql -u root -p
+
+-- Step 2: Create Database
+CREATE DATABASE CompanyDB;
+
+-- Step 3: Use Database
+USE CompanyDB;
+
+-- Step 4: Create Employee Table
+CREATE TABLE Employee (
+    Eid INT,
+    EName VARCHAR(20),
+    Address VARCHAR(20),
+    Salary INT,
+    Commision INT
+);
+
+-- Step 5: Create Project Table
+CREATE TABLE Project (
+    PrNo INT,
+    Addr VARCHAR(20)
+);
+
+-- Step 6: Insert Data into Employee
+INSERT INTO Employee VALUES
+(1,'Amit','Pune',35000,5000),
+(2,'Sneha','Pune',25000,NULL),
+(3,'Savita','Nasik',28000,2000),
+(4,'Pooja','Mumbai',19000,NULL),
+(5,'Sagar','Mumbai',25000,3000);
+
+-- Step 7: Insert Data into Project
+INSERT INTO Project VALUES
+(10,'Mumbai'),
+(20,'Pune'),
+(30,'Jalgoan');
+
+-- Step 8: Display Tables
+SELECT * FROM Employee;
+SELECT * FROM Project;
+
+---------------------------------------------------
+-- 1. Different locations from where employees belong
+---------------------------------------------------
+SELECT DISTINCT Address
+FROM Employee;
+
+---------------------------------------------------
+-- 2. Maximum and Minimum salary
+---------------------------------------------------
+SELECT MAX(Salary) AS Maximum_Salary,
+       MIN(Salary) AS Minimum_Salary
+FROM Employee;
+
+---------------------------------------------------
+-- 3. Employee table in ascending order of salary
+---------------------------------------------------
+SELECT *
+FROM Employee
+ORDER BY Salary ASC;
+
+---------------------------------------------------
+-- 4. Name of employees living in Nasik or Pune
+---------------------------------------------------
+SELECT EName
+FROM Employee
+WHERE Address IN ('Nasik','Pune');
+
+---------------------------------------------------
+-- 5. Employees who do not get commission
+---------------------------------------------------
+SELECT EName
+FROM Employee
+WHERE Commision IS NULL;
+
+---------------------------------------------------
+-- 6. Change city of Amit to Nashik
+---------------------------------------------------
+UPDATE Employee
+SET Address='Nashik'
+WHERE EName='Amit';
+
+---------------------------------------------------
+-- 7. Employees whose name starts with A
+---------------------------------------------------
+SELECT *
+FROM Employee
+WHERE EName LIKE 'A%';
+
+---------------------------------------------------
+-- 8. Count of staff from Mumbai
+---------------------------------------------------
+SELECT COUNT(*) AS Mumbai_Staff
+FROM Employee
+WHERE Address='Mumbai';
+
+---------------------------------------------------
+-- 9. Count of staff from each city
+---------------------------------------------------
+SELECT Address, COUNT(*) AS Total_Staff
+FROM Employee
+GROUP BY Address;
+
+---------------------------------------------------
+-- 10. Addresses where employees belong and projects going on
+---------------------------------------------------
+SELECT DISTINCT Address
+FROM Employee
+UNION
+SELECT DISTINCT Addr
+FROM Project;
+
+---------------------------------------------------
+-- 11. City wise minimum salary
+---------------------------------------------------
+SELECT Address, MIN(Salary) AS Minimum_Salary
+FROM Employee
+GROUP BY Address;
+
+---------------------------------------------------
+-- 12. City wise maximum salary greater than 26000
+---------------------------------------------------
+SELECT Address, MAX(Salary) AS Maximum_Salary
+FROM Employee
+GROUP BY Address
+HAVING MAX(Salary) > 26000;
+
+---------------------------------------------------
+-- 13. Delete employee having salary greater than 30000
+---------------------------------------------------
+DELETE FROM Employee
+WHERE Salary > 30000;
+
+-- Display Updated Employee Table
+SELECT * FROM Employee;
+
+---------------------------------------------------
+-- Step 9: Exit MySQL
+---------------------------------------------------
+EXIT;
