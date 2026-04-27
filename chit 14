@@ -1,0 +1,204 @@
+// =========================================
+// CHIT 14 : MONGODB (Mongo Terminal)
+// Database : Institute
+// Collection : Students
+// =========================================
+
+// Step 1: Open MongoDB Terminal
+mongosh
+
+// =========================================
+// 1. Create Database Institute
+// =========================================
+use Institute
+
+// =========================================
+// 2. Create Collection Students
+// =========================================
+db.createCollection("Students")
+
+// =========================================
+// 3. Insert 10 Documents
+// =========================================
+db.Students.insertMany([
+{
+    RollNo: 1,
+    Student_Name: "Amit",
+    Age: 16,
+    Branch: "IT",
+    Address: { City: "Pune", State: "Maharashtra" },
+    Hobbies: ["Cricket","Reading"]
+},
+{
+    RollNo: 2,
+    Student_Name: "Anita",
+    Age: 17,
+    Branch: "ENTC",
+    Address: { City: "Mumbai", State: "Maharashtra" },
+    Hobbies: ["Music","Dance"]
+},
+{
+    RollNo: 3,
+    Student_Name: "Ajay",
+    Age: 18,
+    Branch: "Mechanical",
+    Address: { City: "Nashik", State: "Maharashtra" },
+    Hobbies: ["Football","Drawing"]
+},
+{
+    RollNo: 4,
+    Student_Name: "Riya",
+    Age: 14,
+    Branch: "Civil",
+    Address: { City: "Pune", State: "Maharashtra" },
+    Hobbies: ["Singing","Chess"]
+},
+{
+    RollNo: 5,
+    Student_Name: "Akash",
+    Age: 19,
+    Branch: "Electrical",
+    Address: { City: "Nagpur", State: "Maharashtra" },
+    Hobbies: ["Gaming","Travel"]
+},
+{
+    RollNo: 6,
+    Student_Name: "Sneha",
+    Age: 20,
+    Branch: "Computer",
+    Address: { City: "Pune", State: "Maharashtra" },
+    Hobbies: ["Coding","Reading"]
+},
+{
+    RollNo: 7,
+    Student_Name: "Arjun",
+    Age: 17,
+    Branch: "IT",
+    Address: { City: "Satara", State: "Maharashtra" },
+    Hobbies: ["Cricket","Movies"]
+},
+{
+    RollNo: 8,
+    Student_Name: "Pooja",
+    Age: 18,
+    Branch: "Computer",
+    Address: { City: "Pune", State: "Maharashtra" },
+    Hobbies: ["Dance","Art"]
+},
+{
+    RollNo: 9,
+    Student_Name: "Anamika",
+    Age: 21,
+    Branch: "Civil",
+    Address: { City: "Solapur", State: "Maharashtra" },
+    Hobbies: ["Writing","Music"]
+},
+{
+    RollNo: 10,
+    Student_Name: "Rahul",
+    Age: 15,
+    Branch: "Mechanical",
+    Address: { City: "Kolhapur", State: "Maharashtra" },
+    Hobbies: ["Swimming","Reading"]
+}
+])
+
+// =========================================
+// 4. Display all students information
+// =========================================
+db.Students.find()
+
+// =========================================
+// 5. Display students whose age > 15
+// =========================================
+db.Students.find(
+{
+    Age: { $gt: 15 }
+}
+)
+
+// =========================================
+// 6. Display student information sorted by name
+// =========================================
+db.Students.find().sort(
+{
+    Student_Name: 1
+}
+)
+
+// =========================================
+// 7. Update Branch to Computer of RollNo 3
+// =========================================
+db.Students.updateOne(
+{
+    RollNo: 3
+},
+{
+    $set: { Branch: "Computer" }
+}
+)
+
+// =========================================
+// 8. Remove document with RollNo 1
+// =========================================
+db.Students.deleteOne(
+{
+    RollNo: 1
+}
+)
+
+// =========================================
+// 9. Display students whose name starts with A
+// =========================================
+db.Students.find(
+{
+    Student_Name: /^A/
+}
+)
+
+// =========================================
+// 10. Display total number of documents
+// =========================================
+db.Students.countDocuments()
+
+// =========================================
+// 11. Display only first 5 documents
+// =========================================
+db.Students.find().limit(5)
+
+// =========================================
+// 12. Display all documents except first 3
+// =========================================
+db.Students.find().skip(3)
+
+// =========================================
+// 13. Display names of students living in Pune
+// =========================================
+db.Students.find(
+{
+    "Address.City": "Pune"
+},
+{
+    _id: 0,
+    Student_Name: 1
+}
+)
+
+// =========================================
+// 14. Display only names of all students
+// =========================================
+db.Students.find(
+{},
+{
+    _id: 0,
+    Student_Name: 1
+}
+)
+
+// =========================================
+// 15. Drop Collection
+// =========================================
+db.Students.drop()
+
+// Step 2: Exit MongoDB
+exit
