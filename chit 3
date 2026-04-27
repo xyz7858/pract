@@ -1,0 +1,76 @@
+-- =========================================
+-- CHIT 3 : UNNAMED PL/SQL BLOCK
+-- CONTROL STRUCTURE + EXCEPTION HANDLING
+-- Schema : Stud(Roll, Att, Status)
+-- =========================================
+
+-- Step 1: Login to Oracle in Ubuntu
+sqlplus system/password
+
+-- Step 2: Create Stud Table
+CREATE TABLE Stud (
+    Roll NUMBER(5),
+    Att NUMBER(5,2),
+    Status VARCHAR2(5)
+);
+
+-- Step 3: Insert Sample Records
+INSERT INTO Stud VALUES (1,80,NULL);
+INSERT INTO Stud VALUES (2,65,NULL);
+INSERT INTO Stud VALUES (3,74,NULL);
+INSERT INTO Stud VALUES (4,90,NULL);
+INSERT INTO Stud VALUES (5,55,NULL);
+
+COMMIT;
+
+-- Step 4: Enable Output
+SET SERVEROUTPUT ON;
+
+-- Step 5: PL/SQL Anonymous Block
+DECLARE
+    R_No Stud.Roll%TYPE := &Roll_No;
+    Attendance Stud.Att%TYPE;
+
+BEGIN
+    -- Get attendance of entered roll number
+    SELECT Att
+    INTO Attendance
+    FROM Stud
+    WHERE Roll = R_No;
+
+    -- Control Structure
+    IF Attendance < 75 THEN
+        DBMS_OUTPUT.PUT_LINE('Term not granted');
+
+        UPDATE Stud
+        SET Status = 'D'
+        WHERE Roll = R_No;
+
+    ELSE
+        DBMS_OUTPUT.PUT_LINE('Term granted');
+
+        UPDATE Stud
+        SET Status = 'ND'
+        WHERE Roll = R_No;
+    END IF;
+
+    COMMIT;
+
+-- Exception Handling
+EXCEPTION
+    WHEN NO_DATA_FOUND THEN
+        DBMS_OUTPUT.PUT_LINE('Student Record Not Found');
+
+    WHEN OTHERS THEN
+        DBMS_OUTPUT.PUT_LINE('Error Occurred');
+END;
+/
+---------------------------------------------------
+-- Step 6: Display Updated Stud Table
+---------------------------------------------------
+SELECT * FROM Stud;
+
+---------------------------------------------------
+-- Step 7: Exit Oracle
+---------------------------------------------------
+EXIT;
