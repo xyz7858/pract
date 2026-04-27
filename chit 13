@@ -1,0 +1,156 @@
+// =========================================
+// CHIT 13 : MONGODB (Mongo Terminal)
+// Collections : Teachers, Department, Students
+// =========================================
+
+// Step 1: Open MongoDB Terminal
+mongosh
+
+// Step 2: Create / Use Database
+use CollegeDB
+
+// =========================================
+// 1. Create Collections and Insert Sample Documents
+// =========================================
+
+// Teachers Collection
+db.Teachers.insertMany([
+{
+    Tname: "Amit",
+    dno: 1,
+    Experience: 5,
+    Salary: 12000,
+    Date_of_Joining: "12-06-2020"
+},
+{
+    Tname: "Neha",
+    dno: 2,
+    Experience: 8,
+    Salary: 15000,
+    Date_of_Joining: "10-05-2018"
+},
+{
+    Tname: "Pooja",
+    dno: 2,
+    Experience: 3,
+    Salary: 10000,
+    Date_of_Joining: "15-07-2022"
+},
+{
+    Tname: "Raj",
+    dno: 3,
+    Experience: 10,
+    Salary: 9000,
+    Date_of_Joining: "20-03-2016"
+}
+])
+
+// Department Collection
+db.Department.insertMany([
+{
+    Dno: 1,
+    Dname: "Computer"
+},
+{
+    Dno: 2,
+    Dname: "IT"
+},
+{
+    Dno: 3,
+    Dname: "ENTC"
+}
+])
+
+// Students Collection
+db.Students.insertMany([
+{
+    Sname: "abc",
+    Roll_No: 1,
+    Class: "FE"
+},
+{
+    Sname: "xyz",
+    Roll_No: 2,
+    Class: "SE"
+},
+{
+    Sname: "Riya",
+    Roll_No: 3,
+    Class: "TE"
+},
+{
+    Sname: "Sam",
+    Roll_No: 5,
+    Class: "FE"
+}
+])
+
+// Display All Collections
+db.Teachers.find()
+db.Department.find()
+db.Students.find()
+
+// =========================================
+// 2. Find all teachers of Dno=2 and Salary >=10000
+// =========================================
+db.Teachers.find(
+{
+    dno: 2,
+    Salary: { $gte: 10000 }
+}
+)
+
+// =========================================
+// 3. Find student information having Roll_No=2
+//    OR Sname='xyz'
+// =========================================
+db.Students.find(
+{
+    $or: [
+        { Roll_No: 2 },
+        { Sname: "xyz" }
+    ]
+}
+)
+
+// =========================================
+// 4. Update student name whose Roll_No=5
+// =========================================
+db.Students.updateOne(
+{
+    Roll_No: 5
+},
+{
+    $set: { Sname: "Ankita" }
+}
+)
+
+// Display Updated Student Record
+db.Students.find({ Roll_No: 5 })
+
+// =========================================
+// 5. Delete all students whose Class is 'FE'
+// =========================================
+db.Students.deleteMany(
+{
+    Class: "FE"
+}
+)
+
+// Display Remaining Students
+db.Students.find()
+
+// =========================================
+// 6. Apply Index on Students Collection
+// =========================================
+db.Students.createIndex(
+{
+    Roll_No: 1
+}
+)
+
+// Display Indexes
+db.Students.getIndexes()
+
+// Step 3: Exit MongoDB
+exit
