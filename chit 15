@@ -1,0 +1,129 @@
+// =========================================
+// CHIT 15 : MONGODB (Aggregation and Indexing)
+// Database : department
+// Collection : teacher
+// =========================================
+
+// Step 1: Open MongoDB Terminal
+mongosh
+
+// =========================================
+// 1. Create Database department
+// =========================================
+use department
+
+// =========================================
+// 2. Create Collection teacher with fields:
+//    name, department, experience, salary
+// =========================================
+db.teacher.insertMany([
+{
+    name: "Amit",
+    department: "Computer",
+    experience: 5,
+    salary: 25000
+},
+{
+    name: "Neha",
+    department: "Computer",
+    experience: 8,
+    salary: 35000
+},
+{
+    name: "Pooja",
+    department: "IT",
+    experience: 4,
+    salary: 20000
+},
+{
+    name: "Raj",
+    department: "IT",
+    experience: 10,
+    salary: 40000
+},
+{
+    name: "Seema",
+    department: "ENTC",
+    experience: 6,
+    salary: 30000
+},
+{
+    name: "Rakesh",
+    department: "ENTC",
+    experience: 12,
+    salary: 45000
+}
+])
+
+// Display All Documents
+db.teacher.find()
+
+// =========================================
+// 3. Display department wise average salary
+// =========================================
+db.teacher.aggregate([
+{
+    $group: {
+        _id: "$department",
+        Average_Salary: { $avg: "$salary" }
+    }
+}
+])
+
+// =========================================
+// 4. Display number of employees in each department
+// =========================================
+db.teacher.aggregate([
+{
+    $group: {
+        _id: "$department",
+        Total_Employees: { $sum: 1 }
+    }
+}
+])
+
+// =========================================
+// 5. Display department wise minimum salary
+// =========================================
+db.teacher.aggregate([
+{
+    $group: {
+        _id: "$department",
+        Minimum_Salary: { $min: "$salary" }
+    }
+}
+])
+
+// =========================================
+// 6. Apply Index on teacher collection
+// =========================================
+db.teacher.createIndex(
+{
+    department: 1
+}
+)
+
+// Display Indexes
+db.teacher.getIndexes()
+
+// Fire Query using Index
+db.teacher.find(
+{
+    department: "Computer"
+}
+)
+
+// =========================================
+// Drop Index
+// =========================================
+db.teacher.dropIndex(
+{
+    department: 1
+}
+)
+
+// Display Remaining Indexes
+db.teacher.getIndexes()
+
+// Step 2: Exit MongoDB
+exit
