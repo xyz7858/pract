@@ -1,0 +1,104 @@
+-- =========================================
+-- CHIT 6 : PL/SQL STORED PROCEDURE
+-- proc_Grade for Student Classification
+-- Stud_Marks(name, total_marks)
+-- Result(Roll, Name, Class)
+-- =========================================
+
+-- Step 1: Login to Oracle SQL*Plus
+sqlplus system/password
+
+-- Step 2: Create Stud_Marks Table
+CREATE TABLE Stud_Marks (
+    Roll NUMBER(5),
+    Name VARCHAR2(20),
+    Total_Marks NUMBER(5)
+);
+
+-- Step 3: Create Result Table
+CREATE TABLE Result (
+    Roll NUMBER(5),
+    Name VARCHAR2(20),
+    Class VARCHAR2(30)
+);
+
+-- Step 4: Insert Sample Records
+INSERT INTO Stud_Marks VALUES (1,'Amit',1200);
+INSERT INTO Stud_Marks VALUES (2,'Neha',950);
+INSERT INTO Stud_Marks VALUES (3,'Pooja',850);
+INSERT INTO Stud_Marks VALUES (4,'Riya',700);
+
+COMMIT;
+
+-- Step 5: Enable Output
+SET SERVEROUTPUT ON;
+
+-- =========================================
+-- Step 6: Create Stored Procedure
+-- =========================================
+CREATE OR REPLACE PROCEDURE proc_Grade (
+    R_No IN NUMBER
+)
+IS
+    S_Name Stud_Marks.Name%TYPE;
+    Marks Stud_Marks.Total_Marks%TYPE;
+    Grade_Class VARCHAR2(30);
+
+BEGIN
+    -- Fetch Student Details
+    SELECT Name, Total_Marks
+    INTO S_Name, Marks
+    FROM Stud_Marks
+    WHERE Roll = R_No;
+
+    -- Control Structure for Classification
+    IF Marks <= 1500 AND Marks >= 990 THEN
+        Grade_Class := 'Distinction';
+
+    ELSIF Marks BETWEEN 900 AND 989 THEN
+        Grade_Class := 'First Class';
+
+    ELSIF Marks BETWEEN 825 AND 899 THEN
+        Grade_Class := 'Higher Second Class';
+
+    ELSE
+        Grade_Class := 'No Class';
+    END IF;
+
+    -- Insert Result into Result Table
+    INSERT INTO Result
+    VALUES (R_No, S_Name, Grade_Class);
+
+    COMMIT;
+
+    DBMS_OUTPUT.PUT_LINE('Student Name : ' || S_Name);
+    DBMS_OUTPUT.PUT_LINE('Marks : ' || Marks);
+    DBMS_OUTPUT.PUT_LINE('Class : ' || Grade_Class);
+
+-- Exception Handling
+EXCEPTION
+    WHEN NO_DATA_FOUND THEN
+        DBMS_OUTPUT.PUT_LINE('Student Record Not Found');
+
+    WHEN OTHERS THEN
+        DBMS_OUTPUT.PUT_LINE('Error Occurred');
+END;
+/
+---------------------------------------------------
+-- Step 7: Execute Procedure
+---------------------------------------------------
+EXEC proc_Grade(1);
+EXEC proc_Grade(2);
+EXEC proc_Grade(3);
+EXEC proc_Grade(4);
+
+---------------------------------------------------
+-- Step 8: Display Tables
+---------------------------------------------------
+SELECT * FROM Stud_Marks;
+SELECT * FROM Result;
+
+---------------------------------------------------
+-- Step 9: Exit Oracle
+---------------------------------------------------
+EXIT;
