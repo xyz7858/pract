@@ -1,0 +1,107 @@
+-- =========================================
+-- CHIT 7 : DATABASE TRIGGER
+-- ROW LEVEL AFTER UPDATE OR DELETE TRIGGER
+-- Library Table with Library_Audit Table
+-- =========================================
+
+-- Step 1: Login to Oracle SQL*Plus
+sqlplus system/password
+
+-- Step 2: Create Library Table
+CREATE TABLE Library (
+    Roll_No NUMBER(5),
+    Name VARCHAR2(20),
+    Book_Name VARCHAR2(30),
+    Date_of_Issue DATE,
+    Status VARCHAR2(1)
+);
+
+-- Step 3: Create Library_Audit Table
+CREATE TABLE Library_Audit (
+    Roll_No NUMBER(5),
+    Name VARCHAR2(20),
+    Book_Name VARCHAR2(30),
+    Date_of_Issue DATE,
+    Status VARCHAR2(1),
+    Action VARCHAR2(20),
+    Action_Date DATE
+);
+
+-- Step 4: Insert Sample Records
+INSERT INTO Library VALUES (1,'Amit','DBMS',SYSDATE-20,'I');
+INSERT INTO Library VALUES (2,'Neha','CN',SYSDATE-10,'I');
+INSERT INTO Library VALUES (3,'Pooja','TOC',SYSDATE-15,'I');
+
+COMMIT;
+
+-- Step 5: Enable Output
+SET SERVEROUTPUT ON;
+
+-- =========================================
+-- Step 6: Create AFTER ROW LEVEL TRIGGER
+-- Track UPDATE and DELETE old values
+-- =========================================
+CREATE OR REPLACE TRIGGER Library_Trigger
+AFTER UPDATE OR DELETE
+ON Library
+FOR EACH ROW
+BEGIN
+
+    -- For Update Operation
+    IF UPDATING THEN
+        INSERT INTO Library_Audit
+        VALUES (
+            :OLD.Roll_No,
+            :OLD.Name,
+            :OLD.Book_Name,
+            :OLD.Date_of_Issue,
+            :OLD.Status,
+            'UPDATED',
+            SYSDATE
+        );
+
+    -- For Delete Operation
+    ELSIF DELETING THEN
+        INSERT INTO Library_Audit
+        VALUES (
+            :OLD.Roll_No,
+            :OLD.Name,
+            :OLD.Book_Name,
+            :OLD.Date_of_Issue,
+            :OLD.Status,
+            'DELETED',
+            SYSDATE
+        );
+    END IF;
+
+END;
+/
+---------------------------------------------------
+-- Step 7: Perform Update Operation
+---------------------------------------------------
+UPDATE Library
+SET Status = 'R'
+WHERE Roll_No = 1;
+
+---------------------------------------------------
+-- Step 8: Perform Delete Operation
+---------------------------------------------------
+DELETE FROM Library
+WHERE Roll_No = 2;
+
+COMMIT;
+
+---------------------------------------------------
+-- Step 9: Display Current Library Table
+---------------------------------------------------
+SELECT * FROM Library;
+
+---------------------------------------------------
+-- Step 10: Display Audit Table
+---------------------------------------------------
+SELECT * FROM Library_Audit;
+
+---------------------------------------------------
+-- Step 11: Exit Oracle
+---------------------------------------------------
+EXIT;
